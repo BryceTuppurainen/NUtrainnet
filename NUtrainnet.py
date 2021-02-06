@@ -11,6 +11,7 @@ import torchvision
 import tqdm
 import torch.nn as nn
 import torch.nn.functional as functional
+import time
 
 TRAIN_PATH = "./Dataset/Datasets/testA"
 
@@ -45,13 +46,25 @@ liveNetwork = Network()
 
 # DEBUGGING! PASS ONE IMAGE THROUGH THE NETWORK TO CONFIRM THAT THE FORWARD PASS IS RUNNING CORRECTLY
 
-print("[Debug] Live network is running!")
-
+print("[Debug] Live network is up!")
+START_TIME = time.time()
 epochs = int(input("[Input] Number of epochs to run? > "))
+debug = input("[Input] Show debug messages? (y/n) > ")
+print("[Time] Started at time "+str(time.ctime(START_TIME))+"!")
 for epoch in range(epochs):
 	i = 0
+	
+	if epoch == 1:
+		EPOCH_TIME = time.time() - START_TIME
+		print("[Time] Approximate time remaining: "+str(int(EPOCH_TIME*(epochs-epoch)))+" seconds...")
+	if epoch > 1:
+		print("[Time] Approximate time remaining: "+str(int(EPOCH_TIME*(epochs-epoch)))+" seconds...")
+	
 	for data in enumerate(trainDataLoader):
 		i+=1
-		print("[Debug]Feeding network image number "+str(i)+" of "+str(len(trainDataLoader))+" in epoch "+str(epoch+1)+" of "+str(epochs)+"...")
+		if debug == "y":
+			print("[Debug] Feeding network image number "+str(i)+" of "+str(len(trainDataLoader))+" in epoch "+str(epoch+1)+" of "+str(epochs)+"...")
 		liveNetwork.zero_grad()
 		output = liveNetwork(data[1][0].view(-1, 1310720))
+
+print("[Info] Training completed!")
