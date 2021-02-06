@@ -67,4 +67,4 @@ for epoch in range(epochs):
 		liveNetwork.zero_grad()
 		output = liveNetwork(data[1][0].view(-1, 1310720))
 
-print("[Info] Training completed!")
+print("[Info] NUtrainnet has completed!")
