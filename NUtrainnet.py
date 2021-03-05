@@ -9,6 +9,7 @@ import matplotlib.pyplot as pyplot
 import torch
 import torchvision
 from torchvision import transforms, datasets
+import tqdm
 
 # CONFIGURE AND DEBUG DATASET
 
@@ -26,6 +27,17 @@ trainset = torch.utils.data.DataLoader(train, batch_size=1, shuffle=True,  num_w
 test = torchvision.datasets.ImageFolder(root=TEST_PATH, transform=TRANSFORM_IMAGE)
 testset = torch.utils.data.DataLoader(test, batch_size=1, shuffle=True,  num_workers=4)
 
+for data in trainset:
+	#print(data) # Commented out for now as this isn't required
+	pyplot.imshow(data[0][0].view(1024, 1280)) # Use the library matplotlib to show the first handwritten image to the user for debugging (note that it was randomised earlier)
+	pyplot.show()
+	break # this is a test, only run this loop once to demonstrate that the first batch has correctly been converted to tensors within tensors comment out the break to check the whole dataset, comment out the whole 
+
+for data in testset:
+	#print(data) # Commented out for now as this isn't required
+	pyplot.imshow(data[0][0].view(1024, 1280)) # Use the library matplotlib to show the first handwritten image to the user for debugging (note that it was randomised earlier)
+	pyplot.show()
+	break # this is a test, only run this loop once to demonstrate that the first batch has correctly been converted to tensors within tensors comment out the break to check the whole dataset, comment out the whole 
 
 # IMPORT MODULES FOR NETWORK BUILDING
 import torch.nn as nn
@@ -60,7 +72,6 @@ print("Beggining training of the dataset through "+str(epochs)+" epochs!")
 for epoch in range(epochs):
 	for data in trainset:
 		pixels, target = data # Unpacking training data into the greyscale values of the pixels as tensors and scalar target values
-		print("training network...", end='')
 		liveNetwork.zero_grad()
 		output = liveNetwork(pixels.view(-1, 1310720))
 		loss = functional.nll_loss(output, target) # Compare the scalar value provided as the output of the current network to the real value in order to determine loss at this point in time
@@ -79,8 +90,8 @@ with torch.no_grad():
 	for data in trainset:
 		pixels, target = data
 		output = liveNetwork(pixels.view(-1, 1310720))
-		for idx, i in enumerate(output):
-			if torch.argmax(i) == target[idx]:
+		for idx, i in output:
+			if i == target[idx]:
 				valid += 1
 			total += 1
 
