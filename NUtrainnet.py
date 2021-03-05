@@ -1,8 +1,3 @@
-# Bryce Tuppurainen's personally written MNIST network model based on pyTorch
-# OCIN (Obscure Character Identification Network)
-# To run this on the majority of linux machines run the following command in a bash terminal: pip3 install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html && pip3 install matplotlib
-# Also HUGE props to sentdex! It's an excellent tutorial as an absolute begginer to pyTorch : https://www.youtube.com/watch?v=i2yPxY2rOzs&list=PLQVvvaa0QuDdeMyHEYc0gxFpYwHY2Qfdh&index=2
-
 # IMPORT MODULES FOR CONFIG
 # Import pyTorch, matplotlib and torchvision (note that the install will be dependant on the CUDA of the GPU in your system usually)
 import matplotlib.pyplot as pyplot
@@ -10,6 +5,10 @@ import torch
 import torchvision
 from torchvision import transforms, datasets
 import tqdm
+
+def viewImage(inputArray):
+	pyplot.imshow(inputArray.view(1024, 1280))
+	pyplot.show()
 
 # CONFIGURE AND DEBUG DATASET
 
@@ -28,16 +27,12 @@ test = torchvision.datasets.ImageFolder(root=TEST_PATH, transform=TRANSFORM_IMAG
 testset = torch.utils.data.DataLoader(test, batch_size=1, shuffle=True,  num_workers=4)
 
 for data in trainset:
-	#print(data) # Commented out for now as this isn't required
-	pyplot.imshow(data[0][0].view(1024, 1280)) # Use the library matplotlib to show the first handwritten image to the user for debugging (note that it was randomised earlier)
-	pyplot.show()
-	break # this is a test, only run this loop once to demonstrate that the first batch has correctly been converted to tensors within tensors comment out the break to check the whole dataset, comment out the whole 
+	viewImage(data[0][0]) # Use the library matplotlib to show the first image to the user for debugging (note that it was randomised earlier)
+	break
 
 for data in testset:
-	#print(data) # Commented out for now as this isn't required
-	pyplot.imshow(data[0][0].view(1024, 1280)) # Use the library matplotlib to show the first handwritten image to the user for debugging (note that it was randomised earlier)
-	pyplot.show()
-	break # this is a test, only run this loop once to demonstrate that the first batch has correctly been converted to tensors within tensors comment out the break to check the whole dataset, comment out the whole 
+	viewImage(data[0][0]) # Use the library matplotlib to show the first image to the user for debugging (note that it was randomised earlier)
+	break
 
 # IMPORT MODULES FOR NETWORK BUILDING
 import torch.nn as nn
@@ -81,18 +76,22 @@ for epoch in range(epochs):
 print("\nFinal loss after "+str(epochs)+" epochs was: "+str(loss.item())+"\n")
 
 # EVALUATION OF NETWORK ACCURACY
-valid = 0
-total = 0
+#valid = 0
+#total = 0
 
-print("Beginning evaluation of network...\n")
+
+#print("Beginning evaluation of network...\n")
 
 with torch.no_grad():
 	for data in trainset:
 		pixels, target = data
 		output = liveNetwork(pixels.view(-1, 1310720))
-		for idx, i in output:
-			if i == target[idx]:
-				valid += 1
-			total += 1
+		viewImage(output)
+		break
+#		for idx, i in output:
+#			if i == target[idx]:
+#				valid += 1
+#			total += 1
 
-print("After evaluating against "+str(total)+" images the final accuracy was: "+str(100*round(valid/total, 10))+"%\n")
+
+#print("After evaluating against "+str(total)+" images the final accuracy was: "+str(100*round(valid/total, 10))+"%\n")
